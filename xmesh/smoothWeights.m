@@ -55,11 +55,11 @@ F(nNodes,1) = sparse(0);
 % Loop through the elements
 for ee =1:nel
     % Display progress in 1% completion increments
-    dispFreq = round(nel/100);
-    if mod(ee,dispFreq) == 0
-        clc
-        fprintf('smoothWeights is %3.0f percent complete with the smoothing process\n',ee/nel*100)
-    end
+%     dispFreq = round(nel/100);
+%     if mod(ee,dispFreq) == 0
+%         clc
+%         fprintf('smoothWeights is %3.0f percent complete with the smoothing process\n',ee/nel*100)
+%     end
     
     % initialize the local stiffness  matrix
     k = zeros(nen);
@@ -94,7 +94,7 @@ end
 K = K + K' - K.*speye(size(K));
 
 % ----------Go Back and take care of dirichlet boundary conditions-------------%
-disp(' Taking care of diriclet BCs...')
+% disp(' Taking care of diriclet BCs...')
 
 [Ki,Kj,~] = find(K);
 for ii = 1:length(tempBounds)
@@ -114,7 +114,7 @@ for ii = 1:length(tempBounds)
     
 end
 
-disp('Solving the System...')
+% disp('Solving the System...')
 % Solve the system.
 temp = K\F;
 NODE(:,3) = full(temp);

@@ -29,9 +29,9 @@ end
 % Number of decimal places to allow.
 d = 10;
 tol = 10^-d;
-allNodes = [round(allNodes(:,1:2)*10^d)/(10^d) allNodes];
-allNodes = sortrows(allNodes,[1,2]);
-allNodes = allNodes(:,3:end);
+allNodes = [round(allNodes(:,1:3)*10^d)/(10^d) allNodes];
+allNodes = sortrows(allNodes,[1,2,3]);
+allNodes = allNodes(:,4:end);
 
 % Pre-allocating the NODE and IEN arrays
 IEN = zeros(nen,nel);
@@ -44,7 +44,7 @@ IEN(n,e) = 1;
 
 
 ctr = 1;
-disp('Generating the connectivity and global node matrices');
+% disp('Generating the connectivity and global node matrices');
 
 for i  = 2:length(allNodes)
     % Element number
@@ -56,7 +56,7 @@ for i  = 2:length(allNodes)
     base_i = i;
     prev_i = i - 1;
         while(  prev_i > 0 && abs( allNodes( i,1) - allNodes( prev_i, 1) ) < tol )
-            if( abs( allNodes( i,2) - allNodes( prev_i, 2) ) < tol)
+            if( abs( allNodes( i,2) - allNodes( prev_i, 2) ) < tol && abs(allNodes(i,3)-allNodes(prev_i,3))<tol)
                 base_i = prev_i;
             end
             prev_i = prev_i - 1;

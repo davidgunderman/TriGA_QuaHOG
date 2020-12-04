@@ -222,7 +222,7 @@ if p==1
     end
     KV = KVe;
     end
-elseif p==2
+ elseif p==2
     clear Q
     ctr1 = 1;
     ctr2 = 1;

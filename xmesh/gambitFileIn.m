@@ -68,8 +68,8 @@ while line ~= -1 & ~strcmp(head(1:8),'BOUNDARY') %#ok<AND2>
     
     line = fgetl(Fid); line = fgetl(Fid);
     
-    n_line = floor(n_grp/10);
-    n_last = mod(n_grp,10);
+    n_line = floor((n_grp-1)/10);
+    n_last = mod((n_grp-1),10);
     
     ctr = 1;
     for ii = 1:n_line

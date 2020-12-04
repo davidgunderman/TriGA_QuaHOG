@@ -47,7 +47,7 @@ tic
 options = getoptions(options);
 
 % Dynamic quadtree decompositions. Call quadtree to generate the background
-% mesh. Then discritise the boundary, and update the polygon that
+% mesh. Then discretise the boundary, and update the polygon that
 % approximates our geometry. Keep doing this until boundarynodes does not
 % split the input polygon, or until a maximum number of interations is
 % reached.
@@ -143,9 +143,9 @@ e = edge;
 i = mytsearch(ph(:,1),ph(:,2),th,p(:,1),p(:,2));
 h = tinterp(ph,th,hh,p,i);
 
-if output
-    fprintf('Placing Boundary Nodes\n');
-end
+% if output
+%     fprintf('Placing Boundary Nodes\n');
+% end
 
 % Edge length
 dxy = p(e(:,2),:)-p(e(:,1),:);
@@ -169,7 +169,7 @@ if any(split)
     p = [p; pm];
     
     % Size function at new nodes
-    disp('tshearch')
+%     disp('tshearch')
     i = mytsearch(ph(:,1),ph(:,2),th,pm(:,1),pm(:,2));
     h = [h; tinterp(ph,th,hh,pm,i)];
     
@@ -182,7 +182,7 @@ else
     splitFlag = 0;
     return
 end
-clc
+% clc
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

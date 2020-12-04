@@ -330,7 +330,7 @@ if ~isempty(options)
     if isfield(options,'split')                                            % Refine boundary on/off
         checklogicalscalar(options.split,'options.split');
     else
-        options.output = d_split;
+        options.split = d_split;
     end
 else                                                                       % Default values
     options.mlim   = d_mlim;

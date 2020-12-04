@@ -23,8 +23,10 @@ if nargin == 1
     options.debug = false;
     options.smoothWeights = true;
     options.smoothNodes = false;
+    options.thresh=1.1;
+    options.hmax=.3;
 
-elseif nargin == 2;
+elseif nargin == 2
     options = varargin{1};
     if ~exist('options.output') %#ok<*EXIST>
         options.output = false;
@@ -32,24 +34,31 @@ elseif nargin == 2;
     if ~exist('options.debug')
         options.debug = false;
     end
-    if ~exist('options.smoothWeights')
+    if ~isfield(options,'smoothWeights')
         options.smoothWeights = true;
     end
     if ~exist('options.smoothNodes')
-        options.smoothNodes = true;
+        options.smoothNodes = false;
+    end
+    if ~isfield(options,'thresh')
+        options.thresh= 1.1;
+    end
+    if ~isfield(options,'hmax')
+        options.hmax=.3;
     end
     
-    
 end
+% options.smoothWeights=false;
+options.smoothNodes=false;
 
-addpath('~/TriGA/xmesh/Mesh2D')
-addpath('./xmesh/Mesh2D')
-addpath('./Mesh2D')
-addpath('.\xmesh\Mesh2D')
-addpath('.\Mesh2D')
-addpath('..\xmesh\Mesh2D')
-addpath('..\Mesh2D')
-clc
+% addpath('./xmesh/Mesh2D')
+% addpath('./xmesh/Mesh2D')
+% addpath('./Mesh2D')
+% addpath('.\xmesh\Mesh2D')
+% addpath('.\Mesh2D')
+% addpath('..\xmesh\Mesh2D')
+% addpath('..\Mesh2D')
+% clc
 
 % Input Parser
 [P,KV,p,bflag,bc,face] = splineFileIn(filename);
@@ -60,11 +69,11 @@ for kk = 1:numel(KV)
 end
 
 % Subdividing the inputted NURBS curves into polygons
-thresh = 1.01;
-[node,edge,kvloc] = NURBS2poly(P,KV,thresh);
+[node,edge,kvloc] = NURBS2poly(P,KV,options.thresh);
 
 % Feeding the polygons into mesh2d
-[pts,tri,kvloc] = xmeshfaces(node,edge,P,KV,kvloc,face,[],options);
+hdata.hmax=options.hmax*(max(node(:,1))-min(node(:,1)));
+[pts,tri,kvloc] = xmeshfaces(node,edge,P,KV,kvloc,face,hdata,options);
 
 % Go back and perform knot insertion along the boundary at the locations
 % specified by kvloc.
@@ -80,7 +89,7 @@ else
     [node,linnode,BFLAG,CFLAG] = elevateMesh(pts,tri,bNode,bNodeflag,bc,p);
     % Generate the global NODE and connectivity arrays.
     [NODE,IEN] = gen_arrays(node);
-    [linNODE,~] = gen_arrays(linnode);
+    [linNODE,linIEN] = gen_arrays(linnode);
 end
 
 
@@ -93,10 +102,11 @@ if options.smoothWeights
     % Solve a Laplace problem to smooth the weights.
     smoothNODE = smoothWeights(NODE, IEN, BFLAG);
     smoothNODE = smoothNODE(:,3);
+    NODE(:,3) = smoothNODE;
 end
-NODE(:,3) = smoothNODE;
 %Write out the mesh to a gambit .neu file.
 gambitFileOut(filename,NODE,IEN,BFLAG,CFLAG)
+gambitFileOut([filename,'lin'],linNODE,linIEN,BFLAG,CFLAG)
 return
 
 function [node,linnode,BFLAG,CFLAG]= elevateMesh(pts,tri,bNode,bflag,bc,p)
@@ -112,6 +122,7 @@ d = 14;
 
 % Define CFLAG as a flag if the current element is curved.
 CFLAG = false(length(tri),1);
+cctr=0;
 for ee = 1:length(tri)
     vert = pts(tri(ee,:),:);
     linnode{ee} = round(gen_net(vert)*10^d)/10^d;
@@ -133,6 +144,10 @@ for ee = 1:length(tri)
                 
                 if p(bflag(bb,2))>1
                     CFLAG(ee) = true;
+                    ss=evalNURBS(node{ee}(side10(ss,:),:),[0 0 0 0 1 1 1 1],0:.1:1);
+                    if abs(ss(:,1).^2+ss(:,2).^2-1)>1e-10
+                        cctr=cctr+1;
+                    end
                 end
                 ctr=ctr+1;
             elseif all(single(node{ee}(side(ss,2),1:2)) == single(bNode{bb}(1,1:2))) && ...
@@ -147,6 +162,10 @@ for ee = 1:length(tri)
                 
                 if p(bflag(bb,2))>1
                     CFLAG(ee) = true;
+                    ss=evalNURBS(node{ee}(side10(ss,:),:),[0 0 0 0 1 1 1 1],0:.1:1);
+                    if abs(ss(:,1).^2+ss(:,2).^2-1)>1e-10
+                        cctr=cctr+1;
+                    end
                 end
                 ctr=ctr+1;
             end

@@ -52,6 +52,12 @@ smalltri    = 0.25;
 largetri    = 4.0;
 qlimit      = 0.5;
 dt          = 0.2;
+% shortedge   = 0.0001;
+% longedge    = 10000;
+% smalltri    = 0.0001;
+% largetri    = 10000.0;
+% qlimit      = 0;
+% dt          = .9;
 
 stats = struct('t_init',0.0,'t_tri',0.0,'t_inpoly',0.0,'t_edge',0.0, ...
                   't_sparse',0.0,'t_search',0.0,'t_smooth',0.0,'t_density',0.0, ...

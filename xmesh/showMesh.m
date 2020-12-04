@@ -19,9 +19,12 @@ xi = 0:.1:1;
 side10 = [1 4 5 2; 2 6 7 3;3 8 9 1 ];
 for ee =  1:n_el
     node = NODE(IEN(:,ee),:);
-    for ss = 1:3;
+    for ss = 1:3
         C = evalNURBS(node(side10(ss,:),:),[0 0 0 0 1 1 1 1],xi);
-        plot(C(:,1),C(:,2),'b')
+        plot(C(:,1),C(:,2),'k')
+        if ee==49&&ss==1
+            C(:,1).^2+C(:,2).^2
+        end
     end
 end
 
